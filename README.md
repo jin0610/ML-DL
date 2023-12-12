@@ -1,3 +1,3 @@
-# SDTech-DS
+# DS
 ### python
 ### R

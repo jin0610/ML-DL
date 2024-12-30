@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from glob import glob
+import json
 import os
 
 def ImageResize(image_folder, size, saved_folder):
@@ -79,8 +80,38 @@ def ImageRotate(image_folder, size, saved_folder):
         cv2.imwrite(new_path, rotate_img)
     print("Image Rotation Success!")
 
+def JsonToTxt(self, json_folder, image_folder, image_extension, class_num, saved_folder):
+    json_name_list = os.listdir(json_folder)
+    for i in json_name_list:
+        try:
+            #json 파일 열기
+            json_path = json_folder + '\\' + i
+            with open(json_path, 'r') as file:
+                data = json.load(file)
 
+            # 이미지 파일 열기
+            image_path = f'{image_folder}\\{i.replace('.json','')}.{image_extension}'
+            image = cv2.imread(image_path)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+            yolo_data = []
+
+            for box in data['annotations']['bbox']:
+                x, y, w, h = int(box['x']), int(box['y']), int(box['w']), int(box['h'])
+
+                # 중심 좌표와 너비, 높이를 정규화
+                x_center = (x + w / 2) / w
+                y_center = (y + h / 2) / h
+
+                yolo_data.append(f"{class_num} {x_center} {y_center} {w} {h}")
+
+            # YOLO 데이터를 txt 파일로 저장
+            txt_path = f'{saved_folder}\\{i.replace('.json','')}.txt'
+            with open(txt_path, 'w') as f:
+                for line in yolo_data:
+                    f.write(f"{line}\n")
+        except:
+            pass
 
 
 

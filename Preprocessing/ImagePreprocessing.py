@@ -4,6 +4,16 @@ from glob import glob
 import json
 import os
 
+def FileExtensions(image_folder):
+    file_path = image_folder + '/*'
+    files = glob(file_path)
+    for name in files:
+        if not os.path.isdir(name):
+            src = os.path.splitext(name)
+            if src[1] in ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png','.PNG']:
+                os.rename(name, src[0] + '.png')
+
+
 def ImageResize(image_folder, size, saved_folder):
     image_name_list = os.listdir(image_folder)
     for image_name in image_name_list:
@@ -80,6 +90,7 @@ def ImageRotate(image_folder, size, saved_folder):
         cv2.imwrite(new_path, rotate_img)
     print("Image Rotation Success!")
 
+# json 파일마다 수정 필요
 def JsonToTxt(self, json_folder, image_folder, image_extension, class_num, saved_folder):
     json_name_list = os.listdir(json_folder)
     for i in json_name_list:
